@@ -1,28 +1,46 @@
-// --- 1. SYNTH AUDIO FEEDBACK (Web Audio API) ---
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+// --- 1. SAFE AUDIO SYNTHESIZER ---
+// Global Web Audio Context
+let audioCtx = null;
 
-function playTone(freq, duration = 0.1, type = 'sine') {
+// Initialize or resume AudioContext safely on user gesture
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
     if (audioCtx.state === 'suspended') {
         audioCtx.resume();
     }
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = type;
-    osc.frequency.value = freq;
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start();
-    gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
-    osc.stop(audioCtx.currentTime + duration);
 }
 
-// --- 2. THEME SWITCHER ---
+// Global click listener guarantees AudioContext is unlocked
+window.addEventListener('click', initAudio, { once: true });
+window.addEventListener('touchstart', initAudio, { once: true });
+
+function playTone(freq, duration = 0.1, type = 'sine') {
+    if (!audioCtx || audioCtx.state !== 'running') return;
+    try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+        osc.stop(audioCtx.currentTime + duration);
+    } catch (e) {
+        console.log("Audio error ignored:", e);
+    }
+}
+
+// --- 2. THEME SWITCHER LOGIC ---
 const themeButtons = document.querySelectorAll('.theme-btn');
 const savedTheme = localStorage.getItem('userTheme') || 'theme-dark';
 document.body.className = savedTheme;
 
 themeButtons.forEach(button => {
     button.addEventListener('click', () => {
+        initAudio();
         playTone(600, 0.08);
         const selectedTheme = button.getAttribute('data-theme');
         document.body.className = selectedTheme;
@@ -41,28 +59,33 @@ const fruitHighScoreDisplay = document.getElementById('fruit-high-score');
 const fruitTypes = ['🍎', '🍉', '🍌', '🍓', '🍍', '🍇', '🥭'];
 let fruitScore = 0;
 let fruitLives = 3;
-let fruitGameInterval;
-let activeFruits = [];
+let fruitGameInterval = null;
+let activeIntervals = []; // Keeps track of active fruit fall timers
 let isMouseDown = false;
 
-// Track mouse button held state for drag-slicing
+// Global mouse drag tracking
 window.addEventListener('mousedown', () => isMouseDown = true);
 window.addEventListener('mouseup', () => isMouseDown = false);
 
-// Load Fruit Slicer High Score
+// Load Fruit Slicer High Score from localStorage
 let bestFruitScore = localStorage.getItem('bestFruitScore') || 0;
 fruitHighScoreDisplay.textContent = bestFruitScore;
 
 startFruitBtn.addEventListener('click', () => {
+    initAudio();
     playTone(500, 0.1);
+    
+    // Clear old active timers if restarting
+    clearAllFruitTimers();
+
     fruitScore = 0;
     fruitLives = 3;
     fruitScoreDisplay.textContent = fruitScore;
     fruitLivesDisplay.textContent = fruitLives;
     fruitStartScreen.style.display = 'none';
 
-    // Spawn fruit every 1 second
-    fruitGameInterval = setInterval(spawnFruit, 1000);
+    // Spawn a fruit every 900ms
+    fruitGameInterval = setInterval(spawnFruit, 900);
 });
 
 function spawnFruit() {
@@ -70,22 +93,20 @@ function spawnFruit() {
 
     const fruit = document.createElement('div');
     fruit.className = 'falling-fruit';
-    
-    // Pick random fruit emoji
     fruit.textContent = fruitTypes[Math.floor(Math.random() * fruitTypes.length)];
     
-    // Random horizontal starting position inside canvas
-    const maxLeft = fruitCanvas.clientWidth - 50;
-    const randomLeft = Math.floor(Math.random() * maxLeft);
-    fruit.style.left = `${randomLeft}px`;
+    // Random horizontal position within boundaries
+    const canvasWidth = fruitCanvas.clientWidth || 300;
+    const randomLeft = Math.floor(Math.random() * (canvasWidth - 60));
+    fruit.style.left = `${Math.max(10, randomLeft)}px`;
     fruit.style.top = `-50px`;
 
     fruitCanvas.appendChild(fruit);
 
     let currentTop = -50;
-    const speed = Math.random() * 2 + 2; // Random falling speed
+    const speed = Math.random() * 2 + 2.5; // Random fall speed
 
-    // Animation loop for falling motion
+    // Animation interval for fruit movement
     const fallInterval = setInterval(() => {
         if (fruitLives <= 0) {
             clearInterval(fallInterval);
@@ -96,13 +117,16 @@ function spawnFruit() {
         currentTop += speed;
         fruit.style.top = `${currentTop}px`;
 
-        // Check if fruit fell past the bottom
-        if (currentTop > fruitCanvas.clientHeight) {
+        // Check if fruit fell off bottom of canvas
+        const canvasHeight = fruitCanvas.clientHeight || 300;
+        if (currentTop > canvasHeight) {
             clearInterval(fallInterval);
             fruit.remove();
+            
+            // Deduct life
             fruitLives--;
             fruitLivesDisplay.textContent = fruitLives;
-            playTone(150, 0.2, 'sawtooth'); // Error sound
+            playTone(150, 0.2, 'sawtooth');
 
             if (fruitLives <= 0) {
                 endFruitGame();
@@ -110,29 +134,47 @@ function spawnFruit() {
         }
     }, 20);
 
-    // Slice interaction (Click or Drag over)
+    activeIntervals.push(fallInterval);
+
+    // Slice interaction handler
+    let isSliced = false;
     const sliceFruit = () => {
+        if (isSliced || fruitLives <= 0) return;
+        isSliced = true;
+        
         clearInterval(fallInterval);
-        playTone(900, 0.1, 'triangle'); // Slice sound
+        playTone(900, 0.1, 'triangle'); // Slice sound tone
+        
         fruitScore++;
         fruitScoreDisplay.textContent = fruitScore;
 
-        // Splat visual effect
+        // Visual splat feedback
         fruit.textContent = '💥';
-        setTimeout(() => fruit.remove(), 150);
+        setTimeout(() => fruit.remove(), 120);
     };
 
-    fruit.addEventListener('click', sliceFruit);
-    fruit.addEventListener('mouseenter', () => {
+    // Supports both clicking and holding down mouse to swipe
+    fruit.addEventListener('pointerdown', sliceFruit);
+    fruit.addEventListener('pointerenter', () => {
         if (isMouseDown) sliceFruit();
     });
 }
 
+function clearAllFruitTimers() {
+    if (fruitGameInterval) clearInterval(fruitGameInterval);
+    activeIntervals.forEach(id => clearInterval(id));
+    activeIntervals = [];
+    
+    // Remove lingering fruit DOM elements
+    const remainingFruits = fruitCanvas.querySelectorAll('.falling-fruit');
+    remainingFruits.forEach(f => f.remove());
+}
+
 function endFruitGame() {
-    clearInterval(fruitGameInterval);
+    clearAllFruitTimers();
     playTone(200, 0.3, 'sawtooth');
     
-    // Save High Score
+    // Check and store High Score
     if (fruitScore > bestFruitScore) {
         bestFruitScore = fruitScore;
         localStorage.setItem('bestFruitScore', bestFruitScore);
@@ -157,6 +199,7 @@ if (bestScore) {
 }
 
 startGameBtn.addEventListener('click', () => {
+    initAudio();
     playTone(400, 0.1);
     reactionResult.textContent = "Get ready...";
     reactionBox.textContent = "Wait for GREEN...";
@@ -214,6 +257,7 @@ codeInput.addEventListener('keypress', (event) => {
 });
 
 function checkGuess() {
+    initAudio();
     const userGuess = parseInt(codeInput.value);
 
     if (isNaN(userGuess) || userGuess < 100 || userGuess > 999) {
@@ -246,6 +290,7 @@ function checkGuess() {
 }
 
 resetCodeBtn.addEventListener('click', () => {
+    initAudio();
     playTone(500, 0.1);
     secretCode = generateSecretCode();
     attempts = 0;
