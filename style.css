@@ -1,18 +1,20 @@
-/* Dynamic Color Themes using CSS Variables */
+/* Color Theme Definitions */
 body.theme-dark {
     --bg-color: #0f172a;
     --card-bg: #1e293b;
     --text-color: #f8fafc;
     --accent-color: #38bdf8;
     --border-color: #334155;
+    --button-text: #0f172a;
 }
 
 body.theme-cyberpunk {
-    --bg-color: #facc15;
-    --card-bg: #000000;
+    --bg-color: #121212;
+    --card-bg: #1a1a00;
     --text-color: #00ff66;
-    --accent-color: #ff0055;
+    --accent-color: #facc15;
     --border-color: #00ff66;
+    --button-text: #000000;
 }
 
 body.theme-synthwave {
@@ -21,21 +23,22 @@ body.theme-synthwave {
     --text-color: #ff71ce;
     --accent-color: #01cdfe;
     --border-color: #05ffa1;
+    --button-text: #000000;
 }
 
-/* Base Layout */
+/* Page Base Formatting */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
     margin: 0;
     padding: 20px;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .top-bar {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 }
 
 .theme-buttons {
@@ -63,11 +66,14 @@ body {
     flex: 1 1 300px;
     max-width: 350px;
     text-align: center;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .avatar {
-    font-size: 4rem;
+    font-size: 3.5rem;
     margin-bottom: 10px;
 }
 
@@ -79,72 +85,96 @@ body {
 .info-list {
     text-align: left;
     margin: 15px 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
 }
 
-/* Skills Badges */
 .skills-container {
     display: flex;
-    gap: 5px;
+    gap: 6px;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 .badge {
     background-color: var(--accent-color);
-    color: #000;
+    color: var(--button-text);
     font-weight: bold;
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 0.8rem;
 }
 
-/* Interactive Mini-Games UI */
+/* Mini-Game Elements */
 .game-box {
     background-color: var(--border-color);
-    padding: 20px;
+    padding: 25px;
     border-radius: 8px;
     margin: 15px 0;
     font-weight: bold;
     cursor: pointer;
     user-select: none;
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 .game-box.ready {
     background-color: #22c55e !important;
-    color: white;
+    color: #ffffff;
+    transform: scale(1.02);
 }
 
 .game-box.waiting {
     background-color: #ef4444 !important;
-    color: white;
+    color: #ffffff;
+}
+
+.game-stats {
+    margin-top: 10px;
+    font-size: 0.9rem;
 }
 
 .input-group {
     display: flex;
     gap: 10px;
     justify-content: center;
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
-input {
-    padding: 8px;
+input[type="number"] {
+    padding: 10px;
     border-radius: 6px;
     border: 1px solid var(--border-color);
-    width: 80px;
+    width: 90px;
     text-align: center;
+    font-size: 1rem;
+    background-color: var(--bg-color);
+    color: var(--text-color);
 }
 
-/* General Button Styling */
+/* Button Styling */
 button {
     background-color: var(--accent-color);
-    color: #000;
+    color: var(--button-text);
     font-weight: bold;
     border: none;
-    padding: 10px 15px;
+    padding: 10px 16px;
     border-radius: 6px;
     cursor: pointer;
-    transition: transform 0.1s ease;
+    transition: transform 0.1s ease, filter 0.2s ease;
+    margin-top: 10px;
 }
 
 button:hover {
-    transform: scale(1.05);
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.secondary-btn {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
 }
