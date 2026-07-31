@@ -1,47 +1,150 @@
-/* Styling the overall page view */
+/* Dynamic Color Themes using CSS Variables */
+body.theme-dark {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --text-color: #f8fafc;
+    --accent-color: #38bdf8;
+    --border-color: #334155;
+}
+
+body.theme-cyberpunk {
+    --bg-color: #facc15;
+    --card-bg: #000000;
+    --text-color: #00ff66;
+    --accent-color: #ff0055;
+    --border-color: #00ff66;
+}
+
+body.theme-synthwave {
+    --bg-color: #1a0b2e;
+    --card-bg: #2b1055;
+    --text-color: #ff71ce;
+    --accent-color: #01cdfe;
+    --border-color: #05ffa1;
+}
+
+/* Base Layout */
 body {
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f4f6f8;
-    color: #2c3e50;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     margin: 0;
     padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.top-bar {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.theme-buttons {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* Header section styling */
-header {
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-/* Main card container styling */
-.card {
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    max-width: 450px;
-    width: 100%;
-    text-align: center;
-}
-
-/* Button styling with smooth hover transition */
-button {
-    background-color: #3498db;
-    color: #ffffff;
-    border: none;
-    padding: 12px 24px;
-    font-size: 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
+    justify-content: center;
+    gap: 10px;
     margin-top: 15px;
 }
 
-/* Hover state to give instant feedback when pointing at the button */
+/* Grid Layout for Cards */
+.grid-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.card {
+    background-color: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 25px;
+    flex: 1 1 300px;
+    max-width: 350px;
+    text-align: center;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+.avatar {
+    font-size: 4rem;
+    margin-bottom: 10px;
+}
+
+.tagline {
+    font-style: italic;
+    opacity: 0.8;
+}
+
+.info-list {
+    text-align: left;
+    margin: 15px 0;
+}
+
+/* Skills Badges */
+.skills-container {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+.badge {
+    background-color: var(--accent-color);
+    color: #000;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+/* Interactive Mini-Games UI */
+.game-box {
+    background-color: var(--border-color);
+    padding: 20px;
+    border-radius: 8px;
+    margin: 15px 0;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+}
+
+.game-box.ready {
+    background-color: #22c55e !important;
+    color: white;
+}
+
+.game-box.waiting {
+    background-color: #ef4444 !important;
+    color: white;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+input {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    width: 80px;
+    text-align: center;
+}
+
+/* General Button Styling */
+button {
+    background-color: var(--accent-color);
+    color: #000;
+    font-weight: bold;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
 button:hover {
-    background-color: #2980b9;
-    transform: translateY(-2px);
+    transform: scale(1.05);
 }
