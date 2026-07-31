@@ -72,6 +72,12 @@ body {
     justify-content: space-between;
 }
 
+/* Make Fruit Slice Game take full width of container */
+.card.full-width {
+    max-width: 100%;
+    flex: 1 1 100%;
+}
+
 .avatar {
     font-size: 3.5rem;
     margin-bottom: 10px;
@@ -105,7 +111,46 @@ body {
     font-size: 0.8rem;
 }
 
-/* Mini-Game Elements */
+/* Fruit Game Area Styling */
+.fruit-area {
+    width: 100%;
+    height: 300px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    margin: 15px 0;
+    cursor: crosshair;
+}
+
+.game-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+/* Individual falling fruit items */
+.falling-fruit {
+    position: absolute;
+    font-size: 2.5rem;
+    user-select: none;
+    pointer-events: auto;
+    transition: transform 0.1s linear;
+}
+
+.fruit-stats {
+    display: flex;
+    justify-content: space-around;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+/* Other Mini-Game Elements */
 .game-box {
     background-color: var(--border-color);
     padding: 25px;
