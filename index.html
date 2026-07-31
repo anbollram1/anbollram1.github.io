@@ -3,23 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Personal Web Space</title>
+    <title>Cyber Space - Developer HQ</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="theme-dark">
 
-    <header>
-        <h1 id="title">Welcome to My Web Space!</h1>
-        <p>A custom website built with HTML, CSS, and JavaScript.</p>
+    <header class="top-bar">
+        <h1 id="greeting">Welcome, Tech Explorer!</h1>
+        <div class="theme-buttons">
+            <button class="theme-btn" data-theme="theme-dark">🌙 Dark</button>
+            <button class="theme-btn" data-theme="theme-cyberpunk">🤖 Cyberpunk</button>
+            <button class="theme-btn" data-theme="theme-synthwave">🌆 Synthwave</button>
+        </div>
     </header>
 
-    <main>
-        <section class="card">
-            <h2>About Me</h2>
-            <p>I am learning how to create web pages and host them online with GitHub Pages.</p>
+    <main class="grid-container">
+        <section class="card profile-card">
+            <div class="avatar">👨‍💻</div>
+            <h2>Alex "Zero-Cool" Vance</h2>
+            <p class="tagline">Lead Quantum Web Architect & Cyber-Archaeologist</p>
             
-            <button id="action-btn">Click Me!</button>
-            <p id="output-message"></p>
+            <div class="info-list">
+                <p>📍 <strong>Location:</strong> Neo-Tokyo Orbiting Station 7</p>
+                <p>🚀 <strong>Current Mission:</strong> Building AI-powered quantum portals</p>
+                <p>⚡ <strong>Power Level:</strong> 9001+</p>
+            </div>
+
+            <div class="skills-container">
+                <span class="badge">Quantum HTML</span>
+                <span class="badge">Matrix CSS</span>
+                <span class="badge">Cyber JS</span>
+            </div>
+        </section>
+
+        <section class="card game-card">
+            <h2>⚡ Game 1: Speed Clicker</h2>
+            <p>Test your hacker reaction times! Click as soon as the target turns green.</p>
+            <div id="reaction-box" class="game-box">Click "Start Game" to begin...</div>
+            <button id="start-game-btn">Start Reaction Game</button>
+            <p id="reaction-result"></p>
+        </section>
+
+        <section class="card game-card">
+            <h2>🔓 Game 2: Code Breaker</h2>
+            <p>Guess the secret 3-digit pin (100 to 999)!</p>
+            <div class="input-group">
+                <input type="number" id="code-input" placeholder="123" min="100" max="999">
+                <button id="guess-btn">Hack Code</button>
+            </div>
+            <p id="code-result">Enter a number to hack the system...</p>
         </section>
     </main>
 
