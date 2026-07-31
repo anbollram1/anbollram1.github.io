@@ -36,6 +36,23 @@
             </div>
         </section>
 
+        <section class="card game-card full-width">
+            <h2>🍉 Game 3: Cyber Fruit Slicer</h2>
+            <p>Click or drag your mouse across falling fruit to slice them before they hit the ground!</p>
+            
+            <div id="fruit-canvas" class="fruit-area">
+                <div class="game-overlay" id="fruit-start-screen">
+                    <button id="start-fruit-btn">Start Slicing!</button>
+                </div>
+            </div>
+
+            <div class="fruit-stats">
+                <span>🍎 Sliced: <strong id="fruit-score">0</strong></span>
+                <span>❤️ Lives: <strong id="fruit-lives">3</strong></span>
+                <span>🏆 Best: <strong id="fruit-high-score">0</strong></span>
+            </div>
+        </section>
+
         <section class="card game-card">
             <h2>⚡ Game 1: Speed Clicker</h2>
             <p>Click "Start Game", wait for GREEN, then click the box fast!</p>
@@ -46,3 +63,26 @@
             
             <div class="game-stats">
                 <p id="reaction-result">Click start to test your speed.</p>
+                <p id="best-score">🏆 Best Score: -- ms</p>
+            </div>
+        </section>
+
+        <section class="card game-card">
+            <h2>🔓 Game 2: Code Breaker</h2>
+            <p>Guess the secret 3-digit PIN (100 to 999)!</p>
+            
+            <div class="input-group">
+                <input type="number" id="code-input" placeholder="123" min="100" max="999">
+                <button id="guess-btn">Hack Code</button>
+            </div>
+            
+            <p id="code-result">Enter a number to crack the system...</p>
+            <p id="attempts-count">Attempts: 0</p>
+            
+            <button id="reset-code-btn" class="secondary-btn">🔄 New Code</button>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
